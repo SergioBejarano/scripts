@@ -29,12 +29,13 @@ while true; do
             read -p "Enter directory: " dir
             read -p "Enter filename or part of it: " filename
             read -p "Enter word to search: " word
-            for file in $(find "$dir" -type f -name "*$filename*" 2>/dev/null); do
+            find "$dir" -type f -name "*$filename*" 2>/dev/null | while read -r file; do
                 echo "Searching in: $file"
                 grep -n "$word" "$file"
                 echo "Total occurrences: $(grep -c "$word" "$file")"
             done
             ;;
+
         4)
             read -p "Enter file path: " file
             echo "Total lines: $(wc -l < "$file")"
