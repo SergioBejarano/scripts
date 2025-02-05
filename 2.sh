@@ -38,15 +38,14 @@ while true; do
 
         4)
             read -p "Enter file path or filename: " file
-            if [[ ! "$file" =~ / ]]; then
-                file="/$file"
-            fi
+
             if [[ -f "$file" ]]; then
                 echo "Total lines: $(wc -l < "$file")"
             else
                 echo "File not found: $file"
             fi
             ;;
+
 
         5)
             read -p "Enter file path: " file
