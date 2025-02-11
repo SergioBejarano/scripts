@@ -1,47 +1,43 @@
 #!/bin/sh
 
-# Solicitar información al usuario
-echo "Ingrese el nombre de usuario:"
-read USERNAME
+# Function to create a new user
+create_user() {
+    username=$1
+    group=$2
+    fullname=$3
+    home_dir=$4
+    shell=$5
+    dir_perm=$6
+    file_perm=$7
+    exec_perm=$8
 
-echo "Ingrese el nombre del grupo:"
-read GROUPNAME
+    # Create the user with the specified details
+    useradd -m -s "$shell" -c "$fullname" -d "$home_dir" -g "$group" "$username"
 
-echo "Ingrese el nombre completo del usuario:"
-read FULLNAME
+    # Set directory permissions
+    chmod "$dir_perm" "$home_dir"
 
-echo "Ingrese el directorio home del usuario:"
-read HOMEDIR
+    # Set file permissions for the user's home directory
+    find "$home_dir" -type f -exec chmod "$file_perm" {} \;
 
-echo "Ingrese la shell del usuario:"
-read SHELL
+    # Set execute permissions for the user's home directory
+    find "$home_dir" -type f -exec chmod "$exec_perm" {} \;
+}
 
-echo "Ingrese los permisos de usuario (ej. 700):"
-read PERM_USER
+# Function to create a new group
+create_group() {
+    groupname=$1
+    group_id=$2
 
-echo "Ingrese los permisos de grupo (ej. 770):"
-read PERM_GROUP
+    # Create the group with the specified group ID
+    groupadd -g "$group_id" "$groupname"
+}
 
-echo "Ingrese los permisos de otros (ej. 755):"
-read PERM_OTHER
-
-echo "Ingrese el GID del grupo:"
-read GID
-
-# Crear grupo si no existe
-if ! grep -q "^$GROUPNAME:" /etc/group; then
-    echo "Creando grupo $GROUPNAME con GID $GID..."
-    groupadd -g "$GID" "$GROUPNAME"
+# Main script execution
+if [ "$#" -ne 8 ]; then
+    echo "Usage: $0 <username> <group> <fullname> <home_dir> <shell> <dir_perm> <file_perm> <exec_perm>"
+    exit 1
 fi
 
-# Crear usuario
-echo "Creando usuario $USERNAME..."
-useradd -m -d "$HOMEDIR" -s "$SHELL" -c "$FULLNAME" -g "$GROUPNAME" "$USERNAME"
-
-# Asignar permisos al home del usuario
-echo "Asignando permisos..."
-chmod "$PERM_USER" "$HOMEDIR"
-chmod "$PERM_GROUP" "$HOMEDIR"
-chmod "$PERM_OTHER" "$HOMEDIR"
-
-echo "Usuario y grupo creados exitosamente."
+create_user "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8"
+create_group "$2" "$9"
