@@ -1,12 +1,20 @@
 #!/bin/sh
+
+
 directorio(){
+	# `read` lee la entrada del usuario y la almacena en la variable `directory`
+	# `-r` evita que las barras invertidas (\) se interpreten como caracteres especiales
+	# `-p` muestra el mensaje "directory: " antes de pedir la entrada
 	read -r -p "directory: " directory
+
+  	# Si el usuario no ingresa nada (cadena vacía), se usa "/" como valor por defecto
 	if [ -z "$directory" ]; then
 		directory="/"
 	fi
 }
 
 recursivo(){
+	# `-a`: muestra archivos ocultos, `-l`: detalles, `-h`: tamaños legibles, `-R`: recursivo
 	ls -alh -R $directory
 }
 
